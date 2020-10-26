@@ -1,6 +1,6 @@
 ﻿/*--------------------------------------------------------------------------------------*/
 //           Action Manager basic functions for layer management
-//           v0.2 
+//           v0.3
 //           Developed by Samuel López
 /*--------------------------------------------------------------------------------------*/
 /*------------------------------------------------------------------*/
@@ -232,6 +232,20 @@ function getSelectedLayers() {
     return selectedLayers;
 }
 /*------------------------------------------------------------------------*/
+//         getElementBy(int) 
+//          INPUT: layer id
+//          BEHAVIOR: selects layer and returns its DOM element, 
+//                              layer remains selected
+/*------------------------------------------------------------------------*/
+function getElementByID(id) {
+    selectLayers (id);
+    return activeDocument.activeLayer;
+    }
+
+
+
+
+/*------------------------------------------------------------------------*/
 //          setLayerName(int, string)
 //          INPUT: layer id, name
 //          BEHAVIOR: selects layer and rename, 
@@ -299,23 +313,7 @@ function getLayerSetChildren(id) {
     }
     return childrenIDs;
 }
-/*------------------------------------------------------------------------*/
-//         getIndexByID(int)
-//         INPUT: layer id
-//         OUTPUT: layer index
-/*------------------------------------------------------------------------*/
-function getIndexByID(id) {
-    var backgroundCount = 0;
-    try {
-        activeDocument.backgroundLayer;
-        backgroundCount = 0;
-    } catch (e) {
-        backgroundCount = -1;
-    }
-    ref = new ActionReference();
-    ref.putIdentifier(idLyr, id);
-    return executeActionGet(ref).getInteger(idItmI) + backgroundCount;
-}
+
 /*------------------------------------------------------------------------*/
 //         groupLayers(array, string)
 //         INPUT: layer ids array, name
