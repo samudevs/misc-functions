@@ -14,7 +14,6 @@ var idShw = charIDToTypeID("Shw ");
 var idHd = charIDToTypeID("Hd  ");
 var idOrdn = charIDToTypeID("Ordn");
 var idTrgt = charIDToTypeID("Trgt");
-var idnull = charIDToTypeID("null");
 var idDcmn = charIDToTypeID("Dcmn");
 var idPrpr = charIDToTypeID("Prpr");
 var idFrom = charIDToTypeID("From");
@@ -542,3 +541,37 @@ function historyRedo() {
     desc.putReference(idnull, ref);
     executeAction(idslct, desc, DialogModes.NO);
 }
+
+//WORK IN PROGRESS
+//ALIGN LEFT/TOP
+// =======================================================
+var idAlgn = charIDToTypeID( "Algn" );
+    var desc3 = new ActionDescriptor();
+    var idnull = charIDToTypeID( "null" );
+        var ref2 = new ActionReference();
+        var idLyr = charIDToTypeID( "Lyr " );
+        var idOrdn = charIDToTypeID( "Ordn" );
+        var idTrgt = charIDToTypeID( "Trgt" );
+        ref2.putEnumerated( idLyr, idOrdn, idTrgt );
+    desc3.putReference( idnull, ref2 );
+    var idUsng = charIDToTypeID( "Usng" );
+    var idADSt = charIDToTypeID( "ADSt" );
+    var idAdLf = charIDToTypeID( "AdLf" );
+    desc3.putEnumerated( idUsng, idADSt, idAdLf );
+executeAction( idAlgn, desc3, DialogModes.NO );
+
+// =======================================================
+var idAlgn = charIDToTypeID( "Algn" );
+    var desc4 = new ActionDescriptor();
+    var idnull = charIDToTypeID( "null" );
+        var ref3 = new ActionReference();
+        var idLyr = charIDToTypeID( "Lyr " );
+        var idOrdn = charIDToTypeID( "Ordn" );
+        var idTrgt = charIDToTypeID( "Trgt" );
+        ref3.putEnumerated( idLyr, idOrdn, idTrgt );
+    desc4.putReference( idnull, ref3 );
+    var idUsng = charIDToTypeID( "Usng" );
+    var idADSt = charIDToTypeID( "ADSt" );
+    var idAdTp = charIDToTypeID( "AdTp" );
+    desc4.putEnumerated( idUsng, idADSt, idAdTp );
+executeAction( idAlgn, desc4, DialogModes.NO );
