@@ -1,6 +1,6 @@
 ﻿/*--------------------------------------------------------------------------------------*/
 //           Action Manager basic functions for layer management
-//           v0.3
+//           v0.5
 //           Developed by Samuel López
 /*--------------------------------------------------------------------------------------*/
 /*------------------------------------------------------------------*/
@@ -47,6 +47,11 @@ var idHstS = charIDToTypeID("HstS");
 var idVsbl = charIDToTypeID("Vsbl");
 var idMd = charIDToTypeID("Md  ");
 var idOpct = charIDToTypeID("Opct");
+var idHrzn = charIDToTypeID("Hrzn");
+var idVrtc = charIDToTypeID("Vrtc");
+var idPnt = charIDToTypeID("Pnt ");
+var idTlrn = charIDToTypeID("Tlrn");
+var idAntA = charIDToTypeID("AntA");
 var idselectionModifier = stringIDToTypeID("selectionModifier");
 var idselectionModifierType = stringIDToTypeID("selectionModifierType");
 var idungroupLayersEvent = stringIDToTypeID("ungroupLayersEvent");
@@ -441,8 +446,8 @@ function getIndexByID(id) {
 //         OUTPUT: layer name
 /*------------------------------------------------------------------------*/
 function getNameByID(id) {
-    return getLayerProperty(id, idNm).getString(idNm);
-}
+    return getLayerProperty(id, idNm); 
+    }
 /*------------------------------------------------------------------------*/
 //         deleteLayer(int)
 //         INPUT: layer id
@@ -543,9 +548,98 @@ function historyRedo() {
 }
 
 //WORK IN PROGRESS
+
+function magicWand (x, y, threshold) {
+    var desc1   = new ActionDescriptor ();
+    var desc2 = new ActionDescriptor ();
+    var ref  = new ActionReference ();
+    ref.putProperty (idChnl, idfsel);
+    desc1.putReference (idnull, ref);
+    desc2.putUnitDouble (idHrzn, idPxl, x);
+    desc2.putUnitDouble (idVrtc, idPxl, y);
+    desc1.putObject (idT, idPnt, desc2);
+    desc1.putInteger (idTlrn, threshold);
+    desc1.putBoolean (idAntA, true);
+  executeAction (idsetd, desc1, DialogModes.NO);
+}
+
+function BorrarFondo (x, y) {
+  var id1 = charIDToTypeID ("Fl  ");
+    var desc1   = new ActionDescriptor ();
+    var id2     = charIDToTypeID ("From");
+      var desc2 = new ActionDescriptor ();
+      var id3   = charIDToTypeID ("Hrzn");
+      var id4   = charIDToTypeID ("#Pxl");
+      desc2.putUnitDouble (id3, id4, x);
+      var id5   = charIDToTypeID ("Vrtc");
+      var id6   = charIDToTypeID ("#Pxl");
+      desc2.putUnitDouble (id5, id6, y);
+    var id7     = charIDToTypeID ("Pnt ");
+    desc1.putObject (id2, id7, desc2);
+    var id8     = charIDToTypeID ("Tlrn");
+    desc1.putInteger (id8, 32);
+    var id9     = charIDToTypeID ("AntA");
+    desc1.putBoolean (id9, true);
+    var id10    = charIDToTypeID ("Usng");
+    var id11    = charIDToTypeID ("FlCn");
+    var id12    = charIDToTypeID ("BckC");
+    desc1.putEnumerated (id10, id11, id12);
+    var id13    = charIDToTypeID ("Md  ");
+    var id14    = charIDToTypeID ("BlnM");
+    var id15    = charIDToTypeID ("Clar");
+    desc1.putEnumerated (id13, id14, id15);
+  executeAction (id1, desc1, DialogModes.NO);
+}
+
+
+function setBackgroundColorWhite() { //TODO: make for any color
+var idsetd = charIDToTypeID( "setd" );
+    var desc389 = new ActionDescriptor();
+    var idnull = charIDToTypeID( "null" );
+        var ref163 = new ActionReference();
+        var idClr = charIDToTypeID( "Clr " );
+        var idBckC = charIDToTypeID( "BckC" );
+        ref163.putProperty( idClr, idBckC );
+    desc389.putReference( idnull, ref163 );
+    var idT = charIDToTypeID( "T   " );
+        var desc390 = new ActionDescriptor();
+        var idH = charIDToTypeID( "H   " );
+        var idAng = charIDToTypeID( "#Ang" );
+        desc390.putUnitDouble( idH, idAng, 115.762939 );
+        var idStrt = charIDToTypeID( "Strt" );
+        desc390.putDouble( idStrt, 0.000000 );
+        var idBrgh = charIDToTypeID( "Brgh" );
+        desc390.putDouble( idBrgh, 100.000000 );
+    var idHSBC = charIDToTypeID( "HSBC" );
+    desc389.putObject( idT, idHSBC, desc390 );
+    var idSrce = charIDToTypeID( "Srce" );
+    desc389.putString( idSrce, """photoshopPicker""" );
+executeAction( idsetd, desc389, DialogModes.NO );       
+    
+    
+    }
+
+
+function removeSelection() {
+var idsetd = charIDToTypeID( "setd" );
+    var desc662 = new ActionDescriptor();
+    var idnull = charIDToTypeID( "null" );
+        var ref287 = new ActionReference();
+        var idChnl = charIDToTypeID( "Chnl" );
+        var idfsel = charIDToTypeID( "fsel" );
+        ref287.putProperty( idChnl, idfsel );
+    desc662.putReference( idnull, ref287 );
+    var idT = charIDToTypeID( "T   " );
+    var idOrdn = charIDToTypeID( "Ordn" );
+    var idNone = charIDToTypeID( "None" );
+    desc662.putEnumerated( idT, idOrdn, idNone );
+executeAction( idsetd, desc662, DialogModes.NO );    
+    
+    }
+
 //ALIGN LEFT/TOP
 // =======================================================
-var idAlgn = charIDToTypeID( "Algn" );
+/*var idAlgn = charIDToTypeID( "Algn" );
     var desc3 = new ActionDescriptor();
     var idnull = charIDToTypeID( "null" );
         var ref2 = new ActionReference();
@@ -574,4 +668,4 @@ var idAlgn = charIDToTypeID( "Algn" );
     var idADSt = charIDToTypeID( "ADSt" );
     var idAdTp = charIDToTypeID( "AdTp" );
     desc4.putEnumerated( idUsng, idADSt, idAdTp );
-executeAction( idAlgn, desc4, DialogModes.NO );
+executeAction( idAlgn, desc4, DialogModes.NO ); */
