@@ -116,20 +116,22 @@ function deselectAllLayers() {
     executeAction(idselectNoLayers, desc, DialogModes.NO);
 }
 /*------------------------------------------------------------------------*/
-//          setAllLayersVisibility(array, boolean)
+//          setLayersVisibility(array, boolean)
 //          INPUT: artLayers/layerSets ids, visibility 
 //          BEHAVIOR: sets visibilities 
 /*------------------------------------------------------------------------*/
 function setLayersVisibility(ids, visibility) {
-    var actionId;
-    visibility == true ? actionId = idShw : actionId = idHd;
-    var desc = new ActionDescriptor();
-    var list = new ActionList();
-    var ref = new ActionReference();
-    for (var i = 0; i < ids.length; i++) ref.putIdentifier(idLyr, ids[i]);
-    list.putReference(ref);
-    desc.putList(idnull, list);
-    executeAction(actionId, desc, DialogModes.NO);
+    if (ids.length > 0) {
+        var actionId;
+        visibility == true ? actionId = idShw : actionId = idHd;
+        var desc = new ActionDescriptor();
+        var list = new ActionList();
+        var ref = new ActionReference();
+        for (var i = 0; i < ids.length; i++) ref.putIdentifier(idLyr, ids[i]);
+        list.putReference(ref);
+        desc.putList(idnull, list);
+        executeAction(actionId, desc, DialogModes.NO);
+    }
 }
 /*------------------------------------------------------------------------*/
 //          getLayerProperty(int, int)
