@@ -1,68 +1,90 @@
-﻿#include "./layer-functions.jsx"
+﻿#include "./layer-am-functions.jsx"
 
 main();
 
 function main() {
-
- //renameLyrsIdxId();
- $.writeln("setAllLayersVisibility");
-setAllLayersVisibility(true, false);
- $.writeln("selectAllLayers");
- selectAllLayers();
-  $.writeln("deselectAllLayers");
-  deselectAllLayers();
-  
-   $.writeln("selectAllLayers");
- selectAllLayers();
-
-   $.writeln("getSelectedLayers");
-
- var slctd = getSelectedLayers();
- $.writeln(slctd);
-  $.writeln("getLayerSetChildren");
-  var children = getLayerSetChildren(slctd[0]);
-  $.writeln("groupLayers");
-  groupLayers(children);
-    $.writeln("duplicateLayers");
-  duplicateLayers(children, activeDocument.name);
-   $.writeln("ungroup");
-  ungroup(children[0]);
-  selectAllLayers();
-  slctd = getSelectedLayers();
-   $.writeln("deleteLayer");
-   $.writeln(getNameByID(slctd[0]));
-  deleteLayer(slctd[0]);
-    }
-
-
-/*------------------------------------------------------------------------*/
-//                             auxiliary functions
-/*------------------------------------------------------------------------*/
-/*------------------------------------------------------------------------*/
-//          renameLyrsIdxId()        
-//          BEHAVIOR: renames all layers with index and id
-
-/*------------------------------------------------------------------------*/
-
-function renameLyrsIdxId() {
-    var sel, idx, txt, active;
-
+    $.writeln("TEST selectAllLayers");    
     selectAllLayers();
-    sel = getSelectedLayers();
+    var selectedLayers = getSelectedLayers();
+    var firstLayerID = selectedLayers[0];
+    $.writeln("Selected layers: ");
+    $.writeln(selectedLayers);
     
-    for (var n = 0; n < sel.length; n++) {
-            setLayerName(sel[n],  getIndexByID(sel[n]) + " " + sel[n]);
-            if (!isLayerSet(sel[n])) {
-                active = activeDocument.activeLayer;
-                active.kind = LayerKind.TEXT;
-                txt = active.textItem;
-                txt.size = 20;
-                txt.position = [10, 50 + n * 15];
-                $.writeln(txt.position);
-                txt.contents = active.name;
-                active.rasterize(RasterizeType.TEXTCONTENTS);
-                
-           }
-        }
-        
+    $.writeln("TEST setLayersVisibility");
+    setLayersVisibility(selectedLayers);
+    
+    $.writeln("TEST deselectAllLayers");
+    deselectAllLayers();
+    selectedLayers = getSelectedLayers();
+    $.writeln("Selected layers: ");
+    $.writeln("[" +selectedLayers + "]");
+    
+    
+    $.writeln("TEST setAllLayersVisibility");
+    $.writeln("Art layers are visible. Layer sets are hidden");
+    setAllLayersVisibility(true, false);
+    
+    $.writeln("TEST getIndexByID");
+    var firstLayerIndex = getIndexByID(firstLayerID);
+    $.writeln("Index of " + firstLayerID + ": " + firstLayerIndex);
+
+  
+   $.writeln("TEST getLayerID");
+   $.writeln("ID of " + firstLayerIndex + ": " + getLayerID(firstLayerIndex));
+    
+   $.writeln("TEST getElementByID");
+   $.writeln(getElementByID(firstLayerID));
+    
+   $.writeln("TEST setLayerName");
+   setLayerName(firstLayerID, "test");
+   
+   $.writeln("TEST getNameByID");
+   $.writeln("Name: " + getNameByID(firstLayerID));
+    
+    /*selectLayers([419]);
+    selectLayers([417], true);
+    selectLayers([410], true); */
+   $.writeln("TEST selectLayers");
+   selectLayers([415, 419]);
+   selectLayers([417], true);
+   $.writeln("Selected layers: " + getSelectedLayers());
+    
+   $.writeln("TEST isLayerSet");
+   $.writeln("Is 341 a layer set? " + isLayerSet(341));
+    
+   $.writeln("TEST getLayerSetChidren"); 
+   $.writeln(getLayerSetChildren(341));
+   
+   $.writeln("TEST grouplayers");
+   $.writeln("Grouping last selection"); 
+   groupLayers([], "test group"); 
+   
+   $.writeln("TEST ungroup");
+   $.writeln("Ungrouping last selection"); 
+   ungroup([]);
+   
+   $.writeln("TEST duplicateLayers");
+   $.writeln("Duplicating last selection"); 
+   duplicateLayers([],activeDocument.name);
+   
+   $.writeln("TEST selectNextLayer & selectPreviousLayer");
+    selectLayers([firstLayerID]);
+   selectNextVisibleLayer();
+   selectPreviousVisibleLayer();
+   
+   $.writeln("TEST moveLayers");
+   $.writeln("Moving 433, 432, 430, 429, 428 to 415")
+   moveLayers([433, 432, 430, 429, 428],415);
+   
+   $.writeln("TEST deleteLayer");
+   $.writeln("Deleting layer 419");
+   deleteLayer(419); 
+    
+    $.writeln("TEST moveNext & movePrev");
+    $.writeln("Moving 416 & 417");
+    moveNext(416);
+    movePrev(417);
+    
+    $.writeln("DONE!");
+    
     }

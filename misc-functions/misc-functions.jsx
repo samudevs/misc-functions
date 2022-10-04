@@ -245,3 +245,26 @@ function writeLog(msg) {
     }
     return true;
 }
+
+function leftPad(target,finalLength, symbol) {
+    var str = target.toString();
+    while (str.length < finalLength) {
+            str = symbol + str;
+        }
+    return str;
+    }
+
+function addTxtLayer(parent,text) {
+    var docRef =  app.activeDocument;   
+    var txtLayer = parent.add();
+    txtLayer.kind = LayerKind.TEXT;
+    var txtItem = txtLayer.textItem;
+
+       
+         txtItem.size = docRef.width / 25; //new UnitValue(docRef.width / 100);
+            
+            txtItem.position = [0 + (docRef.width / 100), (txtItem.size / 1.5) + (docRef.height / 100)];
+            txtItem.contents =  text;
+            
+            return txtLayer;
+            }
