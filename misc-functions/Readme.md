@@ -1,1 +1,0 @@
-Various non-AM functions
