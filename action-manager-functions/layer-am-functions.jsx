@@ -1,5 +1,5 @@
 ﻿/*--------------------------------------------------------------------------------------*/
-//           Action Manager basic functions for layer management
+//           Action Manager basic functions for layer handling
 //           v0.7
 //           Developed by Samuel López
 /*--------------------------------------------------------------------------------------*/
@@ -263,6 +263,7 @@ function groupLayers(layers, name) {
  * @desc Ungroup layers. Layer set is removed and the ungrouped layers remain selected. If layers is null then current selected group will be ungrouped
  * @param {int[]} layers
  */
+
 function ungroup(layers) { 
     layers == null ? selectLayers(layers) : null;
     var desc = new ActionDescriptor();
@@ -271,6 +272,7 @@ function ungroup(layers) {
     desc.putReference(TID("null"), ref);
     executeAction(sTID("ungroupLayersEvent"), desc, DialogModes.NO);
 }
+
 /**
  * @desc Duplicate layers. It places duplicate layers above the first source layer or on top of document if target document is not the active document. Layers remain selected. If sourceLayers is null then current selected layers will be duplicated
  * @param {int[]} sourceLayers - IDs of layers to duplicate
@@ -317,7 +319,7 @@ function selectPreviousVisibleLayer() {
  * @param {int} targetLayer - Target layer ID
  * @param {boolean} placeBefore - Place before/after
  */
-function moveLayers(sourceLayers, targetLayer, placeBefore) { //TODO: rename descXX/refX CHECK correctness
+function moveLayers(sourceLayers, targetLayer, placeBefore) {
     if (sourceLayers.constructor != Array) sourceLayers = [sourceLayers];
     placeBefore == undefined ? placeBefore = false : null;
     var desc = new ActionDescriptor();
@@ -326,8 +328,7 @@ function moveLayers(sourceLayers, targetLayer, placeBefore) { //TODO: rename des
     for (var n = 0; n < sourceLayers.length; n++) {
         ref1.putIdentifier(TID("Lyr "), sourceLayers[n]);
     }
-    desc.putReference(TID("null"), ref1);
-    
+    desc.putReference(TID("null"), ref1);    
     ref2.putIndex(TID("Lyr "), getIndexByID(targetLayer));
     desc.putReference(TID("T   "), ref2);
     executeAction(TID("move"), desc, DialogModes.NO);
@@ -335,7 +336,6 @@ function moveLayers(sourceLayers, targetLayer, placeBefore) { //TODO: rename des
         moveNext(sourceLayers);
     }
 }
-
 
 /**
  * @desc Convert layer ID to index
@@ -353,8 +353,7 @@ function getIndexByID(id) {
  */
 function getNameByID(id) {
     return getLayerProperty(id, TID("Nm  "));
-    }
-
+}
 
 /**
  * @desc Delete layer
@@ -409,7 +408,6 @@ function movePrev(id) {
 function renameLyrsIdxId(toggleLabel) {
     toggleLabel == undefined ?  toggleLabel = false : null;
     var sel, idx, txt, active;
-
     selectAllLayers();
     sel = getSelectedLayers();
 

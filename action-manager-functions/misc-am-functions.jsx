@@ -1,26 +1,24 @@
 ﻿/*--------------------------------------------------------------------------------------*/
-//           Miscellaneous basic functions for layer management
+//           Action Manager Miscellaneous basic functions
 //           v0.1
 //           Developed by Samuel López
 /*--------------------------------------------------------------------------------------*/
 /*------------------------------------------------------------------*/
 //                      Constants section
 /*------------------------------------------------------------------*/
-
 var TID = charIDToTypeID;
 var sTID = stringIDToTypeID;
-
 /*------------------------------------------------------------------------*/
 //                                  MISC functions
 /*------------------------------------------------------------------------*/
 /**
  * @desc Creates a square selection
- * @param {integer} top - top square boundary
- * @param {integer} left - left square boundary
- * @param {integer} bottom - bottom square boundary
- * @param {integer} right - right square boundary
+ * @param {double} top - top square boundary
+ * @param {double} left - left square boundary
+ * @param {double} bottom - bottom square boundary
+ * @param {double} right - right square boundary
  */
-function selectImage(top, left, bottom, right) {
+function imageSelection(top, left, bottom, right) {
     var desc1 = new ActionDescriptor();
     var ref = new ActionReference();
     ref.putProperty(TID("Chnl"), TID("fsel"));
@@ -33,19 +31,41 @@ function selectImage(top, left, bottom, right) {
     desc1.putObject(TID("T   "), TID("Rctn"), desc2);
     executeAction(TID("IntW"), desc1, DialogModes.NO);
 }
-/*------------------------------------------------------------------------*/
-//         crop()
-//         BEHAVIOR: crops selection //TODO: coordinates on input
-/*------------------------------------------------------------------------*/
-function crop() {
+/**
+ * @desc Crops a previous selection. Error if selection doesn't exist.
+ */
+function cropSelection() {
     var desc = new ActionDescriptor();
     desc.putBoolean(TID("Dlt "), true);
     executeAction(TID("Crop"), desc, DialogModes.NO);
 }
-/*------------------------------------------------------------------------*/
-//         historyUndo()
-//         BEHAVIOR: one step back in history
-/*------------------------------------------------------------------------*/
+
+/**
+ * @desc Crops image
+ * @param {double} top - top boundary
+ * @param {double} left - left boundary
+ * @param {double} bottom - bottom boundary
+ * @param {double} right - right boundary
+ * @param {double} angle - rotation
+ * @param {double} deleteOverflow - delete hidden part of image
+ */
+function crop(top, left, bottom, right, angle, deleteOverflow) {
+    deleteOverflow == undefined ?  deleteOverflow = false : null;
+    angle == undefined ?  angle = 0 : null;
+    var desc1 = new ActionDescriptor();
+    var desc2 = new ActionDescriptor();
+    desc2.putUnitDouble( TID("Top "), TID("#Rlt"), top );
+    desc2.putUnitDouble( TID("Left"), TID("#Rlt"), left);
+    desc2.putUnitDouble( TID("Btom"), TID("#Rlt"), bottom);
+    desc2.putUnitDouble( TID("Rght"), TID("#Rlt"), right );
+    desc1.putObject( TID("T   "), TID("Rctn"), desc2 );
+    desc1.putUnitDouble( TID("Angl"), TID("#Ang"), angle );
+    desc1.putBoolean( TID("Dlt "), deleteOverflow);
+    executeAction( TID("Crop"), desc1, DialogModes.NO );
+}
+/**
+ * @desc Undoes last action
+ */
 function historyUndo() {
     var desc = new ActionDescriptor();
     var ref = new ActionReference();
@@ -53,10 +73,9 @@ function historyUndo() {
     desc.putReference(TID("null"), ref);
     executeAction(TID("slct"), desc, DialogModes.NO);
 }
-/*------------------------------------------------------------------------*/
-//         historyRedo()
-//         BEHAVIOR: one step forward in history
-/*------------------------------------------------------------------------*/
+/**
+ * @desc Redoes undone action
+ */
 function historyRedo() {
     var desc = new ActionDescriptor();
     var ref = new ActionReference();
@@ -65,8 +84,12 @@ function historyRedo() {
     executeAction(TID("slct"), desc, DialogModes.NO);
 }
 
-//WORK IN PROGRESS
-
+/**
+ * @desc Applies Magic Wand on point
+ * @param {integer} x - x point coordinate
+ * @param {integer} y - y point coordinate
+ * @param {integer} threshold - selection threshold
+ */
 function magicWand (x, y, threshold) {
     var desc1   = new ActionDescriptor ();
     var desc2 = new ActionDescriptor ();
@@ -81,109 +104,89 @@ function magicWand (x, y, threshold) {
   executeAction (TID("setd"), desc1, DialogModes.NO);
 }
 
-function removeBackground (x, y) {
-  var id1 = charIDToTypeID ("Fl  ");
-    var desc1   = new ActionDescriptor ();
-    var id2     = charIDToTypeID ("From");
-      var desc2 = new ActionDescriptor ();
-      var id3   = charIDToTypeID ("Hrzn");
-      var id4   = charIDToTypeID ("#Pxl");
-      desc2.putUnitDouble (id3, id4, x);
-      var id5   = charIDToTypeID ("Vrtc");
-      var id6   = charIDToTypeID ("#Pxl");
-      desc2.putUnitDouble (id5, id6, y);
-    var id7     = charIDToTypeID ("Pnt ");
-    desc1.putObject (id2, id7, desc2);
-    var id8     = charIDToTypeID ("Tlrn");
-    desc1.putInteger (id8, 32);
-    var id9     = charIDToTypeID ("AntA");
-    desc1.putBoolean (id9, true);
-    var id10    = charIDToTypeID ("Usng");
-    var id11    = charIDToTypeID ("FlCn");
-    var id12    = charIDToTypeID ("BckC");
-    desc1.putEnumerated (id10, id11, id12);
-    var id13    = charIDToTypeID ("Md  ");
-    var id14    = charIDToTypeID ("BlnM");
-    var id15    = charIDToTypeID ("Clar");
-    desc1.putEnumerated (id13, id14, id15);
-  executeAction (id1, desc1, DialogModes.NO);
+
+/**
+ * @desc Applies Magic Eraser on point
+ * @param {integer} x - x point coordinate
+ * @param {integer} y - y point coordinate
+ * @param {integer} atialiasing - selection antialiasing
+ */
+function magicEraser (x, y, tolerance, antialiasing) {
+    var desc1   = new ActionDescriptor (); 
+    var desc2 = new ActionDescriptor (); 
+    desc2.putUnitDouble (TID ("Hrzn"), TID ("#Pxl"), x);
+    desc2.putUnitDouble (TID ("Vrtc"), TID ("#Pxl"), y); 
+    desc1.putObject (TID ("From"), TID ("Pnt "), desc2);
+    desc1.putInteger (TID ("Tlrn"), tolerance);
+    desc1.putBoolean (TID ("AntA"), antialiasing);
+    desc1.putEnumerated (TID ("Usng"), TID ("FlCn"), TID ("BckC"));
+    desc1.putEnumerated (TID ("Md  "), TID ("BlnM"), TID ("Clar"));
+    executeAction (TID ("Fl  "), desc1, DialogModes.NO);
+}
+
+/**
+ * @desc Sets background RGB color
+ * @param {integer} red
+ * @param {integer} green
+ * @param {integer} blue
+ */
+function setBackgroundColor(red, green, blue) {
+    var desc1 = new ActionDescriptor();  
+    var ref = new ActionReference(); 
+    ref.putProperty( TID( "Clr " ), TID( "BckC" ));
+    desc1.putReference( TID( "null" ), ref );    
+    var desc2 = new ActionDescriptor();       
+    desc2.putDouble( TID( "Rd  " ), red);       
+    desc2.putDouble( TID( "Grn " ), green );       
+    desc2.putDouble( TID( "Bl  " ), blue );  
+    desc1.putObject( TID( "T   " ), TID( "RGBC" ), desc2 );    
+    executeAction( TID( "setd" ), desc1, DialogModes.NO );    
 }
 
 
-function setBackgroundColorWhite() { //TODO: make for any color
-var idsetd = charIDToTypeID( "setd" );
-    var desc389 = new ActionDescriptor();
-    var idnull = charIDToTypeID( "null" );
-        var ref163 = new ActionReference();
-        var idClr = charIDToTypeID( "Clr " );
-        var idBckC = charIDToTypeID( "BckC" );
-        ref163.putProperty( idClr, idBckC );
-    desc389.putReference( idnull, ref163 );
-    var idT = charIDToTypeID( "T   " );
-        var desc390 = new ActionDescriptor();
-        var idH = charIDToTypeID( "H   " );
-        var idAng = charIDToTypeID( "#Ang" );
-        desc390.putUnitDouble( idH, idAng, 115.762939 );
-        var idStrt = charIDToTypeID( "Strt" );
-        desc390.putDouble( idStrt, 0.000000 );
-        var idBrgh = charIDToTypeID( "Brgh" );
-        desc390.putDouble( idBrgh, 100.000000 );
-    var idHSBC = charIDToTypeID( "HSBC" );
-    desc389.putObject( idT, idHSBC, desc390 );
-    var idSrce = charIDToTypeID( "Srce" );
-    desc389.putString( idSrce, """photoshopPicker""" );
-executeAction( idsetd, desc389, DialogModes.NO );       
-    
-    
-    }
+/**
+ * @desc Sets foreground RGB color
+ * @param {integer} red
+ * @param {integer} green
+ * @param {integer} blue
+ */
+function setForegroundColor(red, green, blue) {
+    var desc1 = new ActionDescriptor();  
+    var ref = new ActionReference(); 
+    ref.putProperty( TID( "Clr " ), TID( "FrgC" ));
+    desc1.putReference( TID( "null" ), ref );    
+    var desc2 = new ActionDescriptor();       
+    desc2.putDouble( TID( "Rd  " ), red);       
+    desc2.putDouble( TID( "Grn " ), green );       
+    desc2.putDouble( TID( "Bl  " ), blue );  
+    desc1.putObject( TID( "T   " ), TID( "RGBC" ), desc2 );    
+    executeAction( TID( "setd" ), desc1, DialogModes.NO );    
+}
+
+/**
+ * @desc Clears selection
+ */
+function clearSelection() {
+    var desc = new ActionDescriptor();
+    var ref = new ActionReference();
+    ref.putProperty( TID( "Chnl" ), TID( "fsel" ) );
+    desc.putReference( TID( "null" ), ref );
+    desc.putEnumerated( TID( "T   " ), TID( "Ordn" ), TID( "None" ) );
+    executeAction( TID( "setd" ), desc, DialogModes.NO );      
+}
+
+/**
+ * @desc Aligns previously selected layers
+ * @param {string} alignment - { Left: AdLf, top: AdTp, right: AdRg, bottom: AdBt }
+ */
+function alignLayers(alignment) { 
+    var desc = new ActionDescriptor();
+    var ref = new ActionReference();
+    ref.putEnumerated( TID( "Lyr " ), TID( "Ordn" ), TID( "Trgt" ) );
+    desc.putReference( TID( "null" ), ref );
+    desc.putEnumerated( TID( "Usng" ), TID( "ADSt" ), TID( alignment ) );
+    executeAction( TID( "Algn" ), desc, DialogModes.NO );
+}
 
 
-function removeSelection() {
-var idsetd = charIDToTypeID( "setd" );
-    var desc662 = new ActionDescriptor();
-    var idnull = charIDToTypeID( "null" );
-        var ref287 = new ActionReference();
-        var idChnl = charIDToTypeID( "Chnl" );
-        var idfsel = charIDToTypeID( "fsel" );
-        ref287.putProperty( idChnl, idfsel );
-    desc662.putReference( idnull, ref287 );
-    var idT = charIDToTypeID( "T   " );
-    var idOrdn = charIDToTypeID( "Ordn" );
-    var idNone = charIDToTypeID( "None" );
-    desc662.putEnumerated( idT, idOrdn, idNone );
-executeAction( idsetd, desc662, DialogModes.NO );    
-    
-    }
 
-//ALIGN LEFT/TOP
-// =======================================================
-/*var idAlgn = charIDToTypeID( "Algn" );
-    var desc3 = new ActionDescriptor();
-    var idnull = charIDToTypeID( "null" );
-        var ref2 = new ActionReference();
-        var idLyr = charIDToTypeID( "Lyr " );
-        var idOrdn = charIDToTypeID( "Ordn" );
-        var idTrgt = charIDToTypeID( "Trgt" );
-        ref2.putEnumerated( idLyr, idOrdn, idTrgt );
-    desc3.putReference( idnull, ref2 );
-    var idUsng = charIDToTypeID( "Usng" );
-    var idADSt = charIDToTypeID( "ADSt" );
-    var idAdLf = charIDToTypeID( "AdLf" );
-    desc3.putEnumerated( idUsng, idADSt, idAdLf );
-executeAction( idAlgn, desc3, DialogModes.NO );
-
-// =======================================================
-var idAlgn = charIDToTypeID( "Algn" );
-    var desc4 = new ActionDescriptor();
-    var idnull = charIDToTypeID( "null" );
-        var ref3 = new ActionReference();
-        var idLyr = charIDToTypeID( "Lyr " );
-        var idOrdn = charIDToTypeID( "Ordn" );
-        var idTrgt = charIDToTypeID( "Trgt" );
-        ref3.putEnumerated( idLyr, idOrdn, idTrgt );
-    desc4.putReference( idnull, ref3 );
-    var idUsng = charIDToTypeID( "Usng" );
-    var idADSt = charIDToTypeID( "ADSt" );
-    var idAdTp = charIDToTypeID( "AdTp" );
-    desc4.putEnumerated( idUsng, idADSt, idAdTp );
-executeAction( idAlgn, desc4, DialogModes.NO ); */
