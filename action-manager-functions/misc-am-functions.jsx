@@ -17,8 +17,15 @@ var sTID = stringIDToTypeID;
  * @param {double} left - left square boundary
  * @param {double} bottom - bottom square boundary
  * @param {double} right - right square boundary
+ * @param {integer} type - { Rectangle: 0, Elipse: 1}
  */
-function imageSelection(top, left, bottom, right) {
+function imageSelection(top, left, bottom, right, type) {
+    if (type==1) {
+        typeID = TID("Elps");
+    } else {
+        typeID = TID("Rctn");
+    }
+    
     var desc1 = new ActionDescriptor();
     var ref = new ActionReference();
     ref.putProperty(TID("Chnl"), TID("fsel"));
@@ -28,7 +35,7 @@ function imageSelection(top, left, bottom, right) {
     desc2.putUnitDouble(TID("Left"), TID("#Pxl"), left);
     desc2.putUnitDouble(TID("Btom"), TID("#Pxl"), bottom);
     desc2.putUnitDouble(TID("Rght"), TID("#Pxl"), right);
-    desc1.putObject(TID("T   "), TID("Rctn"), desc2);
+    desc1.putObject(TID("T   "), typeID, desc2);
     executeAction(TID("IntW"), desc1, DialogModes.NO);
 }
 /**
@@ -188,5 +195,14 @@ function alignLayers(alignment) {
     executeAction( TID( "Algn" ), desc, DialogModes.NO );
 }
 
+/**
+ * @desc Applies mosaic filter
+ * @param {integer} square size
+ */
+function applyMosaicFilter(squareSize) {
+        var desc= new ActionDescriptor();
+        desc.putUnitDouble( TID( "ClSz" ), TID( "#Pxl" ), squareSize);
+    executeAction( TID( "Msc " ), desc, DialogModes.NO );
+}
 
 
